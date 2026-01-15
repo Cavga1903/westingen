@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+---
+
+# WESTINGEN Project Rules
+
+## Purpose
+
+This project exists solely to support a job application. It demonstrates backend development skills with Python and Flask in a production-like but minimal context.
+
+## Non-Goals
+
+The following are explicitly NOT included:
+- Authentication and authorization
+- Production security hardening
+- Microservices architecture
+- React, Next.js, or any SPA framework
+- Docker containerization
+- Unit tests or test coverage
+- CI/CD pipelines
+- Advanced monitoring or logging
+
+## Architecture Rules
+
+- One Flask application
+- One PostgreSQL database
+- Server-rendered UI (Jinja templates) or static HTML only
+- Maximum 10 API endpoints
+- Maximum 20 dependencies
+
+## Coding Rules
+
+- Explicit code over abstractions
+- No premature optimization
+- Simple naming over clever naming
+- If unsure, choose the simpler solution
+- No over-engineering
+
+## Demo Rules
+
+- Must run locally in under 5 minutes
+- README-first mindset (recruiter-friendly, not developer-ego-driven)
+- Everything must be runnable with minimal setup
+- Focus on credibility and understandability over technical impressiveness

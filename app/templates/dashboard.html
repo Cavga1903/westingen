@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}WESTINGEN – Dashboard{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="kpi-card">
+            <div class="kpi-label">Total Records</div>
+            <div class="kpi-value" id="total-records">-</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card">
+            <div class="kpi-label">Latest Temperature</div>
+            <div class="kpi-value" id="latest-temp">-</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card">
+            <div class="kpi-label">Last Update</div>
+            <div class="kpi-value" id="last-update" style="font-size: 1.2rem;">-</div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="kpi-card">
+            <h5 class="mb-3">Temperature Over Time</h5>
+            <canvas id="temperatureChart" height="80"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="kpi-card">
+            <h5 class="mb-3">Latest 50 Readings</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Device ID</th>
+                            <th>Temperature (°C)</th>
+                            <th>Accel X</th>
+                            <th>Accel Y</th>
+                            <th>Accel Z</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                        </tr>
+                    </thead>
+                    <tbody id="readings-table">
+                        <tr>
+                            <td colspan="8" class="text-center">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}
