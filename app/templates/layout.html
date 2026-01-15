@@ -1,9 +1,34 @@
+<!--
+WESTINGEN Base Layout Template
+
+This is the base template that other pages extend.
+It provides the common structure: header, navbar, styling.
+
+TEMPLATE INHERITANCE:
+- Other templates use extends directive to inherit from this template
+- They override content block with their specific content
+- This avoids repeating header/navbar code in every template
+
+JINJA2 BLOCKS:
+- title block: Page title (overridden by child templates)
+- extra_head block: Additional CSS/scripts in head section
+- content block: Main page content (overridden by child templates)
+- extra_scripts block: Additional JavaScript before closing body tag
+
+WHY THIS PATTERN:
+- DRY (Don't Repeat Yourself): Header/navbar defined once
+- Consistent UI: All pages share same header and styling
+- Easy updates: Change header once, affects all pages
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Block title: Child templates can override this -->
     <title>{% block title %}WESTINGEN{% endblock %}</title>
+    <!-- Bootstrap CSS: Provides responsive grid and components -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -35,20 +60,46 @@
             letter-spacing: 0.5px;
         }
     </style>
+    <!-- Block extra_head: Child templates can add CSS/scripts here -->
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <!-- Header with navbar: Shows company name, role, and logout -->
+    <!-- company_name and user_role are passed from routes.py -->
     <div class="header">
         <div class="container">
-            <h1 class="mb-0">WESTINGEN – Sensor Monitoring Dashboard</h1>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <h1 class="mb-0">WESTINGEN – Sensor Monitoring Dashboard</h1>
+                    <!-- Dashboard link: Always visible when logged in -->
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-light btn-sm">Dashboard</a>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Show company name and role if user is logged in -->
+                    {% if company_name %}
+                    <span class="text-white-50">{{ company_name }} ({{ user_role }})</span>
+                    {% endif %}
+                    <!-- Owner-only link: Only show if user has owner role -->
+                    {% if user_role == 'owner' %}
+                    <a href="{{ url_for('main.admin_devices') }}" class="btn btn-light btn-sm">Manage Devices</a>
+                    {% endif %}
+                    <!-- Logout form: POSTs to /auth/logout -->
+                    <form method="POST" action="{{ url_for('main.logout') }}" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     
+    <!-- Main content area: Child templates override this block -->
     <div class="container">
         {% block content %}{% endblock %}
     </div>
     
+    <!-- Bootstrap JavaScript: Required for interactive components -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Block extra_scripts: Child templates can add JavaScript here -->
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,104 @@
+<!--
+WESTINGEN Device Management Template
+
+This page allows owners to create and view devices.
+Only accessible to users with 'owner' role (enforced by @owner_required in routes.py).
+
+DEVICE CREATION:
+- Owner enters device name (e.g., "robot-001")
+- System generates random API key
+- API key is shown once (user must save it)
+- Device uses this key in X-DEVICE-KEY header for authentication
+- Device names must be unique within the same company
+
+DEVICE DELETION:
+- Devices cannot be deleted in this demo
+- This preserves historical data integrity
+- In production systems, devices are typically deactivated, not deleted
+
+TENANT ISOLATION:
+- Devices are filtered by company_id (owner only sees their company's devices)
+- New devices are automatically linked to owner's company
+- This happens in routes.py, not in the template
+-->
+
+{% extends "layout.html" %}
+
+{% block title %}WESTINGEN – Device Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Device Management</h2>
+</div>
+
+<!-- Flash messages: Show success/error when creating devices -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- Device creation form: POSTs to same route (/admin/devices) -->
+<div class="kpi-card mb-4">
+    <h5 class="mb-3">Create New Device</h5>
+    <form method="POST" action="{{ url_for('main.admin_devices') }}">
+        <div class="row">
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="name" placeholder="Device name (e.g., robot-001)" required>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Create Device</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Device list: Shows all devices for current company -->
+<!-- devices variable is passed from routes.py (filtered by company_id) -->
+<div class="kpi-card">
+    <h5 class="mb-3">Your Devices</h5>
+    {% if devices %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>API Key</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Jinja2 loop: Iterate over devices list from backend -->
+                {% for device in devices %}
+                <tr>
+                    <td><strong>{{ device.name }}</strong></td>
+                    <td>
+                        <!-- Display API key: This is what devices use for authentication -->
+                        <code class="text-break">{{ device.api_key }}</code>
+                        <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('{{ device.api_key }}')">Copy</button>
+                    </td>
+                    <td>{{ device.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No devices yet. Create one above.</p>
+    {% endif %}
+</div>
+
+<!-- JavaScript: Copy API key to clipboard -->
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('API Key copied to clipboard!');
+    });
+}
+</script>
+{% endblock %}

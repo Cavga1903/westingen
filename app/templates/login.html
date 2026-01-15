@@ -1,0 +1,94 @@
+<!--
+WESTINGEN Login Page Template
+
+This is a server-rendered HTML page using Jinja2 templating.
+Flask injects data into this template before sending it to the browser.
+
+WHY SERVER-RENDERED HTML (not React)?
+- Simpler stack: No build process, no separate frontend server
+- Direct database access: Flask can query DB and inject data
+- Better for demos: Shows backend skills without frontend complexity
+- SEO-friendly: HTML is rendered server-side (though not needed for this app)
+
+JINJA2 TEMPLATING:
+- Variable syntax: Outputs a variable value
+- Code blocks: Executes Python-like code (loops, conditionals)
+- Template inheritance: Inherits from another template (not used here)
+- url_for(): Generates URLs from route names (prevents broken links)
+
+This page is public (no @login_required) because it IS the login page.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WESTINGEN – Login</title>
+    <!-- Bootstrap CSS from CDN: Provides styling without local files -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .login-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px 8px 0 0;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="header">
+            <h2 class="mb-0">WESTINGEN</h2>
+            <small>Sensor Monitoring System</small>
+        </div>
+        
+        <!-- Flash messages: Display success/error messages from Flask -->
+        <!-- get_flashed_messages() retrieves messages set via flash() in routes.py -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Login form: POSTs to /login route -->
+        <!-- url_for('main.login') generates the correct URL from route name -->
+        <form method="POST" action="{{ url_for('main.login') }}">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="owner@demo.com" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
+    
+    <!-- Bootstrap JavaScript: Required for alert dismiss buttons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

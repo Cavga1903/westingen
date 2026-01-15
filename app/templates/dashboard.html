@@ -1,12 +1,39 @@
+<!--
+WESTINGEN Dashboard Template
+
+This page displays sensor data visualization for logged-in users.
+It extends layout.html (inherits header, navbar, styling).
+
+DATA FLOW:
+1. User visits / (dashboard route)
+2. Flask renders this template with company_name and user_role
+3. JavaScript (app.js) fetches data from /api/latest and /api/stats
+4. JavaScript updates KPI cards, chart, and table
+5. Auto-refresh every 5 seconds
+
+TENANT ISOLATION:
+- User must be logged in (enforced by @login_required in routes.py)
+- JavaScript API calls use session cookie (automatic)
+- Backend filters by company_id (user only sees their company's data)
+
+WHY JAVASCRIPT HERE?
+- Chart.js needs client-side rendering (can't render charts server-side)
+- Auto-refresh requires JavaScript (setInterval)
+- But data comes from server-rendered template variables (company_name, user_role)
+-->
+
 {% extends "layout.html" %}
 
 {% block title %}WESTINGEN – Dashboard{% endblock %}
 
 {% block extra_head %}
+<!-- Chart.js: Client-side charting library for temperature visualization -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 {% endblock %}
 
 {% block content %}
+<!-- KPI Cards: Key Performance Indicators displayed at top -->
+<!-- Values populated by JavaScript from /api/stats endpoint -->
 <div class="row mb-4">
     <div class="col-md-4">
         <div class="kpi-card">
@@ -28,6 +55,8 @@
     </div>
 </div>
 
+<!-- Temperature Chart: Line chart showing temperature over time -->
+<!-- Rendered by Chart.js (client-side) with data from /api/latest -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="kpi-card">
@@ -37,6 +66,9 @@
     </div>
 </div>
 
+<!-- Data Table: Latest 50 sensor readings -->
+<!-- Populated by JavaScript from /api/latest endpoint -->
+<!-- Tenant-filtered: Only shows readings from user's company -->
 <div class="row">
     <div class="col-12">
         <div class="kpi-card">
@@ -68,5 +100,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<!-- Custom JavaScript: Handles data fetching and UI updates -->
+<!-- url_for('static', ...) generates path to static files -->
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 {% endblock %}
